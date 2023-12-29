@@ -14,11 +14,15 @@ const Home = () => {
       console.log(error.message);
     }
   };
+  
   return (
     <>
       <div className="p-4 box mt-3 text-center">
         Hello Welcome <br />
         {user && user.email}
+        <br />
+        {user && user.displayName}
+        <br />
       </div>
       <div className="d-grid gap-2">
         <Button variant="primary" onClick={handleLogout}>

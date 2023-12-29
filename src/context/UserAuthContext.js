@@ -14,23 +14,26 @@ import { auth } from "../firebase";
 const userAuthContext = createContext();
 
 export function UserAuthContextProvider({ children }) {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null); // Initialize with null
 
   function logIn(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
   }
+
   function signUp(email, password) {
     return createUserWithEmailAndPassword(auth, email, password);
   }
+
   function logOut() {
     return signOut(auth);
   }
+
   function googleSignIn() {
     const googleAuthProvider = new GoogleAuthProvider();
     return signInWithPopup(auth, googleAuthProvider);
   }
 
-  function setUpRecaptha(number) {
+  function setUpRecaptcha(number) {
     const recaptchaVerifier = new RecaptchaVerifier(
       "recaptcha-container",
       {},
@@ -41,9 +44,9 @@ export function UserAuthContextProvider({ children }) {
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentuser) => {
-      console.log("Auth", currentuser);
-      setUser(currentuser);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      console.log("Auth", currentUser);
+      setUser(currentUser);
     });
 
     return () => {
@@ -59,7 +62,7 @@ export function UserAuthContextProvider({ children }) {
         signUp,
         logOut,
         googleSignIn,
-        setUpRecaptha,
+        setUpRecaptcha,
       }}
     >
       {children}
@@ -68,5 +71,9 @@ export function UserAuthContextProvider({ children }) {
 }
 
 export function useUserAuth() {
-  return useContext(userAuthContext);
+  const context = useContext(userAuthContext);
+  if (!context) {
+    throw new Error('useUserAuth must be used within a UserAuthContext Provider');
+  }
+  return context;
 }
