@@ -3,11 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { Form, Alert } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import { useUserAuth } from "../context/UserAuthContext";
-import { getAuth, createUserWithEmailAndPassword, sendSignInLinkToEmail } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "firebase/auth";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { app } from "../firebase";
 
-// Initialize Firebase services
 const auth = getAuth(app);
 const firestore = getFirestore(app);
 
@@ -25,6 +24,7 @@ const Signup = () => {
       const docRef = await addDoc(collection(firestore, "users"), {
         userId,
         name,
+        email,
         company,
       });
 
@@ -34,35 +34,35 @@ const Signup = () => {
     }
   };
 
-  const handlePasswordlessSignup = async () => {
+  const checkIfEmailExists = async (email) => {
     try {
-      await sendSignInLinkToEmail(auth, email, {
-        url: `${window.location.origin}/profile`, // URL to redirect after verification
-        handleCodeInApp: true,
-      });
-  
-      alert(
-        `An email has been sent to ${email}. Click the link in the email to sign in.`
-      );
-  
-      navigate("/");
-    } catch (err) {
-      console.error("Error sending email link:", err);
-      setError("Error sending email link. Please check the console for details.");
+      const methods = await fetchSignInMethodsForEmail(auth, email);
+      return methods.length > 0; // If length > 0, email is registered
+    } catch (error) {
+      console.error('Error checking if email exists:', error);
+      throw error;
     }
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
     try {
-      await signUp(email, password);
-      await writeData(auth.currentUser.uid);
-      
-      navigate("/");
+      const emailExists = await checkIfEmailExists(email);
+
+      if (emailExists) {
+        setError("This email is already registered. Please log in instead.");
+      } else {
+        // Email is not registered, proceed with sign up
+        await signUp(email, password);
+        await writeData(auth.currentUser.uid);
+
+        navigate("/");
+      }
     } catch (err) {
-      setError(err.message);
+      console.error("Error during signup:", err);
+      setError("Error during signup. Please check the console for details.");
     }
   };
 
@@ -109,11 +109,7 @@ const Signup = () => {
             </Button>
           </div>
         </Form>
-        <div className="mt-3">
-          <Button variant="link" onClick={handlePasswordlessSignup}>
-            Sign up with Email Link
-          </Button>
-        </div>
+      
       </div>
       <div className="p-4 box mt-3 text-center">
         Already have an account? <Link to="/">Log In</Link>

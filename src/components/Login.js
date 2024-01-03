@@ -4,6 +4,9 @@ import { Form, Alert } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import GoogleButton from "react-google-button";
 import { useUserAuth } from "../context/UserAuthContext";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { app } from "../firebase";
+import { getAuth, createUserWithEmailAndPassword, sendSignInLinkToEmail } from "firebase/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +14,9 @@ const Login = () => {
   const [error, setError] = useState("");
   const { logIn, googleSignIn } = useUserAuth();
   const navigate = useNavigate();
+
+  const auth = getAuth(app);
+  const firestore = getFirestore(app);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,11 +33,32 @@ const Login = () => {
     e.preventDefault();
     try {
       await googleSignIn();
-      navigate("/");
+      navigate("/profile"); // Redirect to the authenticated user's page
     } catch (error) {
       console.log(error.message);
     }
   };
+
+  const handleEmailLinkSignIn = async () => {
+    try {
+      console.log("handleEmailLinkSignIn called");
+      console.log("Email Value before sending link:", email); // Log email before sending link
+      await sendSignInLinkToEmail(auth, email, {
+        url: `${window.location.origin}/profile`,
+        handleCodeInApp: true,
+      });
+      // Set email in localStorage
+      window.localStorage.setItem("emailForSignIn", email);
+      alert(`An email has been sent to ${email}. Click the link in the email to sign in.`);
+      navigate("/");
+    } catch (err) {
+      console.error("Error sending email link:", err);
+      console.log("Email Value during error:", email); // Log email during error
+      setError("Error sending email link. Please check the console for details.");
+    }
+  }
+  
+  
 
   return (
     <>
@@ -60,6 +87,11 @@ const Login = () => {
               Log In
             </Button>
           </div>
+          <div className="mt-3">
+          <Button variant="link" onClick={handleEmailLinkSignIn}>
+            Sign up with Email Link
+          </Button>
+        </div>
         </Form>
         <hr />
         <div>

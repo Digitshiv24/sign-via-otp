@@ -8,7 +8,7 @@ import PhoneSignUp from "./components/PhoneSignUp";
 import Profile from "./components/Profile"; // Import the Profile component
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./context/UserAuthContext";
-import EmailSignup from "./components/EmailSignup";
+import EmailSignInHandler from "./components/EmailSignInHandler";
 
 function App() {
   return (
@@ -16,6 +16,9 @@ function App() {
       <Row>
         <Col>
           <UserAuthContextProvider>
+            {/* Remove the following line, it's causing the error */}
+            {/* <Route path="/email-signup" element={<EmailSignInHandler />} /> */}
+            <EmailSignInHandler />
             <Routes>
               <Route
                 path="/home"
@@ -25,8 +28,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/profile" element={<Profile />} /> 
-              <Route path="/email-signup" element={<EmailSignup />} /> 
+              <Route path="/profile" element={<Profile />} />
               <Route path="/" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/phonesignup" element={<PhoneSignUp />} />
