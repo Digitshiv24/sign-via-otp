@@ -4,13 +4,13 @@ import { getFirestore } from "firebase/firestore";
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBH3IrciFG5QStKV4WQppRuvSDgcUdwLBk",
-  authDomain: "testrr-4fbd9.firebaseapp.com",
-  projectId: "testrr-4fbd9",
-  storageBucket: "testrr-4fbd9.appspot.com",
-  messagingSenderId: "40634169050",
-  appId: "1:40634169050:web:2937583ee6a4660ddd57e3"
-  };
+  apiKey: "AIzaSyDetu-y9iYu3H-nEi_EdhSMCju-tbS5wXs",
+  authDomain: "sign-via-email-21155.firebaseapp.com",
+  projectId: "sign-via-email-21155",
+  storageBucket: "sign-via-email-21155.appspot.com",
+  messagingSenderId: "209037482842",
+  appId: "1:209037482842:web:8be3ba8d3836ed09e83163"
+};
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
