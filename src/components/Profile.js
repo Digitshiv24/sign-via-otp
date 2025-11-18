@@ -78,7 +78,7 @@ const Profile = () => {
         <p className="not-logged-in">User not logged in</p>
       )}
 
-<      Button variant="primary" onClick={handleLogout}>
+      <Button variant="primary" onClick={handleLogout}>
           Log out
         </Button>
     </div>

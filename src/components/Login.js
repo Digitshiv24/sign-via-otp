@@ -4,9 +4,8 @@ import { Form, Alert } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import GoogleButton from "react-google-button";
 import { useUserAuth } from "../context/UserAuthContext";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { app } from "../firebase";
-import { getAuth, createUserWithEmailAndPassword, sendSignInLinkToEmail } from "firebase/auth";
+import { getAuth, sendSignInLinkToEmail } from "firebase/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,7 +15,6 @@ const Login = () => {
   const navigate = useNavigate();
 
   const auth = getAuth(app);
-  const firestore = getFirestore(app);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
